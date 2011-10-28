@@ -8,34 +8,38 @@
  *  Warning, this code isn't the prettiest, so I tried to make up for it with
  *  comments - I think I may be out of touch with PHP :(
  *
- * TODO: Maybe use the read_csv() functions in generateTable()
+ * TODO: Move the flash notice/error above the table?
+ * TODO: Maybe use the read_csv() functions in generateBody()
  * TODO: CSS!!!
  * TODO: Jquery to make the flash notices fade in?
- * TODO: Discus?
+ * TODO: Disqus?
  *
  */
 
 // =============================================================================
-// Configuration
+// Globals
 // =============================================================================
 $csvfile = "dates.csv";
+$notice = "";
+$error = "";
 
 
 // =============================================================================
 // CSV Helpers
 // =============================================================================
-function read_csv($filename) {
-  $lines = explode("\n", file_get_contents("$filename"));
+function read_csv() {
+  $lines = explode("\n", file_get_contents($GLOBALS['csvfile']));
   foreach ($lines as $line)
     $csv[] = str_getcsv($line);
   return $csv;
 }
 
-function write_csv($filename, $data) {
+function write_csv($data) {
+
   foreach ($data as $line) {
     $contents[] = implode(",", $line);
   }
-  file_put_contents($filename, implode("\n", $contents));
+  file_put_contents($GLOBALS['csvfile'], implode("\n", $contents));
 }
 
 
@@ -43,7 +47,7 @@ function write_csv($filename, $data) {
 // SUBMISSION: Appending a new attendee to a date
 // =============================================================================
 if (isset($_POST['available'])) {
-  $csv = read_csv($csvfile);                // Load the CSV file
+  $csv = read_csv();                        // Load the CSV file
   foreach ($_POST as $k => $v) {            // Loop through the post vars
     if ($v == "#avail") {                   // $k will be the the date
       foreach ($csv as $index => $line) {   // Loop through the lines of CSV
@@ -53,7 +57,7 @@ if (isset($_POST['available'])) {
       }
     }
   }
-  write_csv($csvfile, $csv);                // Save it!
+  write_csv($csv);                          // Save it!
   $notice = "Saved!";                       // Tell the user
 }
 
@@ -62,7 +66,7 @@ if (isset($_POST['available'])) {
 // SUBMISSION: Deleting an attendee from a date
 // =============================================================================
 elseif (isset($_POST['delete'])) {
-  $csv = read_csv($csvfile);                // Load the CSV file
+  $csv = read_csv();                        // Load the CSV file
   foreach ($_POST as $k => $v) {            // Loop through the post vars
     if ($v == "#delete") {                  // $k will be a composite...
       $items = explode("#", $k);            // Split $k up into:
@@ -79,7 +83,7 @@ elseif (isset($_POST['delete'])) {
       }
     }
   }
-  write_csv($csvfile, $csv);                // Save it!
+  write_csv($csv);                          // Save it!
   $notice = "Deleted!";                     // Tell the user
 }
 
@@ -87,10 +91,14 @@ elseif (isset($_POST['delete'])) {
 // =============================================================================
 // Generate the HTML table from CSV
 // =============================================================================
-function generateTable($filename) {
+function generateBody() {
 
   // If a file exists, then the booking system is open!
-  if (($handle = fopen($filename, "r")) !== FALSE) {
+  if (($handle = fopen($GLOBALS['csvfile'], 'r')) !== FALSE) {
+
+    // Print the form
+    echo '<form method="post" action="' . $_SERVER['PHP_SELF'] . '">';
+    echo '<label for="name">Your name:<input name="name"/></label>';
 
     // Print the table header
     echo '<table border="1">';
@@ -144,9 +152,10 @@ function generateTable($filename) {
     echo "</table>";
     echo "<input type='submit' name='available' value='Submit availability'/>";
     echo "<input type='submit' name='delete' value='Delete selected attendees'/>";
+    echo "</form>";
 
   } else {
-    echo "<div>The booking system is closed!</div>";
+    $GLOBALS['error'] = "The booking system is closed!";
   }
 }
 
@@ -161,19 +170,11 @@ function generateTable($filename) {
   <body>
     <h1>Dinner booking</h1>
     <hr />
-    <div class="notice">
-      <?php echo $notice; ?>
-    </div>
 
-    <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
+    <?php generateBody(); ?>
 
-      <label for="name">
-        Your name:
-        <input name="name"/>
-      </label>
+    <div class="notice"><?php echo $GLOBALS['notice']; ?></div>
+    <div class="error"><?php echo $GLOBALS['error']; ?></div>
 
-      <?php generateTable($csvfile); ?>
-
-    </form>
   </body>
 </html>
