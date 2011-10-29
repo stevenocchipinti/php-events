@@ -15,7 +15,6 @@
 // =============================================================================
 $csvfile = "dates.csv";
 $notice = "";
-$error = "";
 
 
 // =============================================================================
@@ -162,10 +161,25 @@ function generateBody() {
     return $out;
 
   } else {
-    $GLOBALS['error'] = "The booking system is closed!";
+    $GLOBALS['notice'] = "The booking system is closed!";
   }
 }
 
+
+// =============================================================================
+// Flash messages
+// =============================================================================
+function flash() {
+  global $notice;
+
+  if ($notice)
+    return "<div class='flash' id='notice'>$notice</div>";
+  else
+    return "<div id='info'>Please fill in your name and which times are most suitable for you.</div>";
+
+}
+
+// Do this before loading the page
 $table = generateBody();
 
 ?>
@@ -179,10 +193,11 @@ $table = generateBody();
 
   <body>
     <div id="container">
-      <h1>Dinner booking</h1>
+      <h1>Dinner event booking system</h1>
 
-      <div class="flash" id="notice">NOTICE<?php echo $GLOBALS['notice']; ?></div>
-      <div class="flash" id="error">ERROR<?php echo $GLOBALS['error']; ?></div>
+      <div id="flashbox">
+        <?php echo flash(); ?>
+      </div>
 
       <?php echo $table; ?>
     </div>
