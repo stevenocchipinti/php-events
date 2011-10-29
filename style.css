@@ -1,0 +1,68 @@
+body {
+  background-color: #DEF;
+}
+#container {
+  background-color: #FFF;
+  width: 640px;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #000;
+  font-family: sans-serif;
+}
+h1 {
+  text-align: center;
+}
+.flash {
+  padding: 12px 20px;
+  margin: 20px 10px;
+  width: 580px;
+}
+#notice {
+  border: 1px solid #12BE10;
+  background-color: #BCEFBC;
+}
+#error {
+  border: 1px solid #F44C4C;
+  background-color: #FFC2C2;
+}
+#user-input {
+  padding: 12px 20px;
+  border: 1px solid #DDD;
+  margin: 20px 10px;
+  width: 580px;
+}
+#user-input input {
+  width: 450px;
+}
+label {
+  padding: 0px 15px 0px 5px;
+}
+table {
+  border: 1px solid #DDD;
+  border-collapse: collapse;
+  width: 620px;
+  padding: 20px;
+  margin: 20px 10px;
+  text-align: center;
+}
+td,th {
+  border: 1px solid #DDD;
+  padding: 10px;
+}
+th {
+  background-color: #F2F2F2;
+}
+td.attendee {
+  text-align: left;
+}
+#submission {
+  padding: 12px 20px;
+  border: 1px solid #DDD;
+  margin: 20px 10px;
+  width: 580px;
+}
+#submission input {
+  width: 250px;
+  padding: 5px 15px;
+  margin: 10px 20px;
+}

@@ -8,12 +8,6 @@
  *  Warning, this code isn't the prettiest, so I tried to make up for it with
  *  comments - I think I may be out of touch with PHP :(
  *
- * TODO: Move the flash notice/error above the table?
- * TODO: Maybe use the read_csv() functions in generateBody()
- * TODO: CSS!!!
- * TODO: Jquery to make the flash notices fade in?
- * TODO: Disqus?
- *
  */
 
 // =============================================================================
@@ -97,17 +91,20 @@ function generateBody() {
   if (($handle = fopen($GLOBALS['csvfile'], 'r')) !== FALSE) {
 
     // Print the form
-    echo '<form method="post" action="' . $_SERVER['PHP_SELF'] . '">';
-    echo '<label for="name">Your name:<input name="name"/></label>';
+    $out .= '<form method="post" action="' . $_SERVER['PHP_SELF'] . '">';
+    $out .= '<div id="user-input">';
+    $out .= '<label for="name">Your name:</label>';
+    $out .= '<input name="name"/>';
+    $out .= '</div>';
 
     // Print the table header
-    echo '<table border="1">';
-    echo '<tr>';
-    echo '<th>Date</th>';
-    echo '<th>Your<br/>availability</th>';
-    echo '<th>Total<br/>attendees</th>';
-    echo '<th>Attendees</th>';
-    echo '</tr>';
+    $out .= '<table>';
+    $out .= '<tr>';
+    $out .= '<th>Date</th>';
+    $out .= '<th>Your<br/>availability</th>';
+    $out .= '<th>Total<br/>attendees</th>';
+    $out .= '<th>Attendees</th>';
+    $out .= '</tr>';
 
     // Open the CSV file and iterate over the rows
     while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
@@ -118,46 +115,58 @@ function generateBody() {
         "%A<br />%d-%h %Y<br />%H:%M %p",
         strtotime($data[0])
       );
-      echo "<tr id='$timestamp_raw'>";
-      echo "<th>$timestamp_str</th>";
+      $out .= "<tr id='$timestamp_raw'>";
+      $out .= "<th>$timestamp_str</th>";
 
       // Insert checkbox to indicate availability
-      echo "<td>";
-      echo "<input
+      $out .= "<td>";
+      $out .= "<input
         type='checkbox'
         name='$timestamp_raw'
         value='#avail'/>";
-      echo "</td>";
+      $out .= "</td>";
 
       // Insert the total attendees column
       $num = count($data);
-      echo "<td>" . ($num-1) . "</td>";
+      $out .= "<td>" . ($num-1) . "</td>";
 
       // Insert each attendee with a delete checkbox
-      echo "<td>";
+      $out .= "<td class='attendee'>";
       $attendees = array_splice($data, 1);
       foreach ($attendees as $attendee) {
-        echo "<input
+        $out .= "<input
           type='checkbox'
           name='$timestamp_raw#$attendee'
           value='#delete'/>";
-       echo "$attendee<br />";
+       $out .= "$attendee<br />";
       }
-      echo "</td>";
+      $out .= "</td>";
 
-      echo "</td></tr>";
+      $out .= "</td></tr>";
     }
 
     fclose($handle);
-    echo "</table>";
-    echo "<input type='submit' name='available' value='Submit availability'/>";
-    echo "<input type='submit' name='delete' value='Delete selected attendees'/>";
-    echo "</form>";
+    $out .= "</table>";
+    $out .= "<div id='submission'>";
+    $out .= "<input
+      type='submit'
+      name='available'
+      value='Submit availability'/>";
+    $out .= "<input
+      type='submit'
+      name='delete'
+      value='Delete selected attendees'/>";
+    $out .= "</div>";
+    $out .= "</form>";
+
+    return $out;
 
   } else {
     $GLOBALS['error'] = "The booking system is closed!";
   }
 }
+
+$table = generateBody();
 
 ?>
 
@@ -165,16 +174,20 @@ function generateBody() {
 
   <head>
     <title>Dinner booking</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
 
   <body>
-    <h1>Dinner booking</h1>
-    <hr />
+    <div id="container">
+      <h1>Dinner booking</h1>
 
-    <?php generateBody(); ?>
+      <div class="flash" id="notice">NOTICE<?php echo $GLOBALS['notice']; ?></div>
+      <div class="flash" id="error">ERROR<?php echo $GLOBALS['error']; ?></div>
 
-    <div class="notice"><?php echo $GLOBALS['notice']; ?></div>
-    <div class="error"><?php echo $GLOBALS['error']; ?></div>
+      <?php echo $table; ?>
+    </div>
 
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript" ></script>
+    <script src="javascript.js" type="text/javascript" /></script>
   </body>
 </html>
