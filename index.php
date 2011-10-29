@@ -111,7 +111,7 @@ function generateBody() {
       // Process row (the event date and time)
       $timestamp_raw = $data[0];
       $timestamp_str = strftime(
-        "%A<br />%d-%h %Y<br />%H:%M %p",
+        "%A<br />%d-%h %Y<br />%l:%M %p",
         strtotime($data[0])
       );
       $out .= "<tr id='$timestamp_raw'>";
