@@ -15,6 +15,7 @@
 // =============================================================================
 $csvfile = "dates.csv";
 $notice = "";
+$error = "";
 
 
 // =============================================================================
@@ -40,18 +41,22 @@ function write_csv($data) {
 // SUBMISSION: Appending a new attendee to a date
 // =============================================================================
 if (isset($_POST['available'])) {
-  $csv = read_csv();                        // Load the CSV file
-  foreach ($_POST as $k => $v) {            // Loop through the post vars
-    if ($v == "#avail") {                   // $k will be the the date
-      foreach ($csv as $index => $line) {   // Loop through the lines of CSV
-        if ($line[0] == $k) {               // Only get the selected date line
-          $csv[$index][] = $_POST['name'];  // Append the name to that line
+  if (strlen(trim($_POST['name'])) > 0) {
+    $csv = read_csv();                        // Load the CSV file
+    foreach ($_POST as $k => $v) {            // Loop through the post vars
+      if ($v == "#avail") {                   // $k will be the the date
+        foreach ($csv as $index => $line) {   // Loop through the lines of CSV
+          if ($line[0] == $k) {               // Only get the selected date line
+            $csv[$index][] = $_POST['name'];  // Append the name to that line
+          }
         }
       }
     }
+    write_csv($csv);                          // Save it!
+    $notice = "Saved!";                       // Tell the user
+  } else {
+    $error = "You must specify a name";
   }
-  write_csv($csv);                          // Save it!
-  $notice = "Saved!";                       // Tell the user
 }
 
 
@@ -171,11 +176,14 @@ function generateBody() {
 // =============================================================================
 function flash() {
   global $notice;
+  global $error;
 
-  if ($notice)
+  if (!empty($notice))
     return "<div class='flash' id='notice'>$notice</div>";
+  elseif (!empty($error))
+    return "<div class='flash' id='error'>$error</div>";
   else
-    return "<div id='info'>Please fill in your name and which times are most suitable for you.</div>";
+    return "<div id='info'>Please fill in your name and which times are most suitable for you</div>";
 
 }
 
@@ -193,7 +201,7 @@ $table = generateBody();
 
   <body>
     <div id="container">
-      <h1>Dinner event booking system</h1>
+      <h1>Event Booking System</h1>
 
       <div id="flashbox">
         <?php echo flash(); ?>
