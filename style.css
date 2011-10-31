@@ -80,3 +80,7 @@ td.attendee {
   padding: 5px 15px;
   margin: 10px 20px;
 }
+.small {
+  font-size: x-small;
+  font-weight: normal;
+}

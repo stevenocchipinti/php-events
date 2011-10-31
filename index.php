@@ -107,7 +107,7 @@ function generateBody() {
     $out .= '<th>Date</th>';
     $out .= '<th>Your<br/>availability</th>';
     $out .= '<th>Total<br/>attendees</th>';
-    $out .= '<th>Attendees</th>';
+    $out .= '<th>Attendees<br /><span class="small">(Select to delete)</span></th>';
     $out .= '</tr>';
 
     // Open the CSV file and iterate over the rows
