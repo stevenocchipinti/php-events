@@ -195,7 +195,7 @@ $table = generateBody();
 <html>
 
   <head>
-    <title>Dinner booking</title>
+    <title>Event booking</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
 
