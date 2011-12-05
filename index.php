@@ -138,8 +138,10 @@ function generateBody() {
     while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
 
       // The first row is the info
-      if (empty($info))
+      if (empty($info)) {
         $info = $data[0];
+        continue;
+      }
 
       // Process row (the event date and time)
       $timestamp_raw = $data[0];
