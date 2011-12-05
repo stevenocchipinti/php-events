@@ -7,6 +7,7 @@
  *
  *  Warning, this code isn't the prettiest, so I tried to make up for it with
  *  comments - I think I may be out of touch with PHP :(
+ *  ... either that or I am now just very used to pretty Ruby code.
  *
  */
 
@@ -29,7 +30,6 @@ function read_csv() {
 }
 
 function write_csv($data) {
-
   foreach ($data as $line) {
     $contents[] = implode(",", $line);
   }
@@ -87,6 +87,26 @@ elseif (isset($_POST['delete'])) {
 
 
 // =============================================================================
+// Flash messages
+// =============================================================================
+function flash() {
+  global $notice;
+  global $error;
+  global $info;
+
+  if (!empty($notice))
+    return "<div class='flash' id='notice'>$notice</div>";
+  elseif (!empty($error))
+    return "<div class='flash' id='error'>$error</div>";
+  elseif (!empty($info))
+    return "<div id='info'>$info</div>";
+  else
+    return "<div id='info'>Please fill in your name and which times are most suitable for you</div>";
+
+}
+
+
+// =============================================================================
 // Generate the HTML table from CSV
 // =============================================================================
 function generateBody() {
@@ -110,8 +130,16 @@ function generateBody() {
     $out .= '<th>Attendees<br /><span class="small">(Select to delete)</span></th>';
     $out .= '</tr>';
 
+    // Clear the global info variable, so it can be set by the first CSV row
+    global $info;
+    $info = "";
+
     // Open the CSV file and iterate over the rows
     while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+
+      // The first row is the info
+      if (empty($info))
+        $info = $data[0];
 
       // Process row (the event date and time)
       $timestamp_raw = $data[0];
@@ -170,23 +198,6 @@ function generateBody() {
   }
 }
 
-
-// =============================================================================
-// Flash messages
-// =============================================================================
-function flash() {
-  global $notice;
-  global $error;
-
-  if (!empty($notice))
-    return "<div class='flash' id='notice'>$notice</div>";
-  elseif (!empty($error))
-    return "<div class='flash' id='error'>$error</div>";
-  else
-    return "<div id='info'>Please fill in your name and which times are most suitable for you</div>";
-
-}
-
 // Do this before loading the page
 $table = generateBody();
 
@@ -201,8 +212,7 @@ $table = generateBody();
 
   <body>
     <div id="container">
-      <h1>Event Booking System</h1>
-
+      <h1 class="title">"Are you free?" - Event Booking System </h1>
       <div id="flashbox">
         <?php echo flash(); ?>
       </div>
