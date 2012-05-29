@@ -222,6 +222,8 @@ $table = generateBody();
       <?php echo $table; ?>
     </div>
 
+    <a href="https://github.com/stevenocchipinti/php-events"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript" ></script>
     <script src="javascript.js" type="text/javascript" /></script>
   </body>
